@@ -14,12 +14,14 @@
         <form name="shipping_zone_edit_module_form" class="CustomShippingZoneFees\Form\ShippingZoneEditModuleForm" />
     </forms>
 
+    <!--
     <services>
         <service id="custom.shipping.zone.fees.postage.listener" class="CustomShippingZoneFees\EventListeners\SetPostageEventListener">
             <argument type="service" id="request"/>
             <tag name="kernel.event_subscriber"/>
         </service>
     </services>
+    -->
 
     <hooks>
         <hook id="customshippingzonefees.config.hook" class="CustomShippingZoneFees\Hook\BackHook">

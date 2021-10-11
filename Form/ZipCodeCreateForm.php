@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: nicolasbarbey
- * Date: 24/08/2020
- * Time: 15:54
- */
 
 namespace CustomShippingZoneFees\Form;
 
@@ -23,11 +17,12 @@ class ZipCodeCreateForm extends BaseForm
     {
         $countries = CountryQuery::create()->find();
         $choice = [];
+        $local = $this->getRequest()->getSession()->getAdminLang();
 
         /** @var Country $country */
         foreach ($countries as $country){
-            $choice += [
-                 $country->getId() => $country->setLocale('en_US')->getTitle()
+            $choice[] = [
+                $country->setLocale($local->getLocale())->getTitle() => $country->getId()
             ];
         }
 
@@ -57,7 +52,7 @@ class ZipCodeCreateForm extends BaseForm
             ]);
     }
 
-    public function getName()
+    public static function getName()
     {
         return "zip_code_create_form";
     }

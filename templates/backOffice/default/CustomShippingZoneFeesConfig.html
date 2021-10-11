@@ -16,7 +16,7 @@
         </tr>
         </thead>
         <tbody>
-        {loop name="custom_shipping_zone_fees_loop" type="custom_shipping_zone_fees" locale=$locale}
+        {loop name="custom_shipping_zone_fees_loop" type="custom_shipping_zone_fees" locale=$locale|default:null}
             <tr>
                 <td>
                     <a href="{url path="/admin/module/CustomShippingZoneFees/edit/{$ID}"}">{$NAME}</a>
@@ -54,7 +54,7 @@
             {form_field field='fee'}
                 <label for="{$label_attr.for}">{$label}</label>
                 <div class="input-group">
-                    <input type="text" name="{$name}" id="{$id}" class="form-control">
+                    <input type="text" name="{$name}" id="{$label_attr.for}" class="form-control">
                     <span class="input-group-addon">{$SYMBOL}</span>
                 </div>
             {/form_field}

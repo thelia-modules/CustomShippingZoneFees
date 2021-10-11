@@ -13,7 +13,7 @@
                         <div class="form-group">
                             <label for="{$label_attr.for}" class="control-label">{$label}</label>
                             <div class="input-group">
-                                <select name="{$name}" id="{$id}" class="form-control">
+                                <select name="{$name}" id="{$label_attr.for}" class="form-control">
                                     {loop name="select_custom_shipping_zone_fees_loop" type="custom_shipping_zone_fees" without_zone="{$delivery_module_id}" locale=$locale}
                                         <option value={$ID}>{$NAME}</option>
                                     {/loop}

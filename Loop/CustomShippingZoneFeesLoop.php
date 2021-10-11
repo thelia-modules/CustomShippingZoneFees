@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: nicolasbarbey
- * Date: 27/08/2020
- * Time: 16:13
- */
 
 namespace CustomShippingZoneFees\Loop;
 
