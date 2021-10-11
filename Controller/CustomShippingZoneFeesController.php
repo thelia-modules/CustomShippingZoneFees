@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: nicolasbarbey
- * Date: 21/08/2020
- * Time: 15:59
- */
 
 namespace CustomShippingZoneFees\Controller;
 
@@ -15,6 +9,7 @@ use CustomShippingZoneFees\Model\CustomShippingZoneFees;
 use CustomShippingZoneFees\Model\CustomShippingZoneFeesQuery;
 use CustomShippingZoneFees\Model\CustomShippingZoneFeesZip;
 use CustomShippingZoneFees\Model\CustomShippingZoneFeesZipQuery;
+use Symfony\Component\HttpFoundation\Request;
 use Thelia\Controller\Admin\BaseAdminController;
 use Thelia\Model\Base\CurrencyQuery;
 use Thelia\Model\Lang;
@@ -26,8 +21,10 @@ class CustomShippingZoneFeesController extends BaseAdminController
     public function createShippingZoneAction()
     {
         $langs = LangQuery::create()->filterByActive(1)->find();
+
+        $shippingZoneFeeForm = $this->createForm(CustomShippingZoneFeesCreateForm::getName());
         try{
-            $form = $this->validateForm(new CustomShippingZoneFeesCreateForm($this->getRequest()));
+            $form = $this->validateForm($shippingZoneFeeForm);
 
             $shippingZone = new CustomShippingZoneFees();
 
@@ -49,9 +46,9 @@ class CustomShippingZoneFeesController extends BaseAdminController
         }
     }
 
-    public function deleteShippingZoneAction()
+    public function deleteShippingZoneAction(Request $request)
     {
-        $id = $this->getRequest()->get('id');
+        $id = $request->get('id');
 
         try{
             $shippingZone = CustomShippingZoneFeesQuery::create()->findOneById($id);
@@ -67,14 +64,15 @@ class CustomShippingZoneFeesController extends BaseAdminController
         }
     }
 
-    public function updateShippingZoneAction()
+    public function updateShippingZoneAction(Request $request)
     {
-        $id = $this->getRequest()->get("id");
+        $id = $request->get("id");
         $shippingZone = CustomShippingZoneFeesQuery::create()->findOneById($id);
         /** @var Lang $lang */
-        $lang = $this->getSession()->get("thelia.admin.edition.lang");
+        $lang = $request->getSession()->get("thelia.admin.edition.lang");
+        $shippingZoneFeeForm = $this->createForm(CustomShippingZoneFeesCreateForm::getName());
         try{
-            $form = $this->validateForm(new CustomShippingZoneFeesCreateForm($this->getRequest()));
+            $form = $this->validateForm($shippingZoneFeeForm);
 
             $shippingZone
                 ->setFee($form->get('fee')->getData())
@@ -94,13 +92,14 @@ class CustomShippingZoneFeesController extends BaseAdminController
         }
     }
 
-    public function createZipShippingZoneAction()
+    public function createZipShippingZoneAction(Request $request)
     {
-        $lang = $this->getSession()->get("thelia.admin.edition.lang");
-        $id = $this->getRequest()->get("id");
+        $lang = $request->getSession()->get("thelia.admin.edition.lang");
+        $id = $request->get("id");
+        $zipCodeForm = $this->createForm(ZipCodeCreateForm::getName());
         try{
             $shippingZone = CustomShippingZoneFeesQuery::create()->findOneById($id);
-            $form = $this->validateForm(new ZipCodeCreateForm($this->getRequest()));
+            $form = $this->validateForm($zipCodeForm);
             $zip = (new CustomShippingZoneFeesZip())
                 ->setZipCode($form->get("zip")->getData())
                 ->setCountryId($form->get("country")->getData());
@@ -116,10 +115,10 @@ class CustomShippingZoneFeesController extends BaseAdminController
         }
     }
 
-    public function deleteZipShippingZoneAction()
+    public function deleteZipShippingZoneAction(Request $request)
     {
-        $lang = $this->getSession()->get("thelia.admin.edition.lang");
-        $zip = CustomShippingZoneFeesZipQuery::create()->findOneById($this->getRequest()->get("zipId"));
+        $lang = $request->getSession()->get("thelia.admin.edition.lang");
+        $zip = CustomShippingZoneFeesZipQuery::create()->findOneById($request->get("zipId"));
         $id = $zip->getCustomShippingZoneFeesId();
         try{
             $zip->delete();
@@ -138,27 +137,23 @@ class CustomShippingZoneFeesController extends BaseAdminController
      * @return \Thelia\Core\HttpFoundation\Response
      * @throws \Propel\Runtime\Exception\PropelException
      */
-    public function renderShippingZonePageAction()
+    public function renderShippingZonePageAction(Request $request)
     {
-        $defaultLang = LangQuery::create()->findOneByByDefault(1);
-        $locale = $defaultLang->getLocale();
-        if ($langId = $this->getRequest()->get('edit_language_id')){
-            $locale = LangQuery::create()->findOneById($langId)->getLocale();
+        if (!$langId = $request->get('edit_language_id')){
+            $langId = LangQuery::create()->filterByByDefault(1)->findOne();
         }
-        $id = $this->getRequest()->get('id');
+        $id = $request->get('id');
         $shippingZone = CustomShippingZoneFeesQuery::create()->findOneById($id);
-
-        $zipCodes = $shippingZone->getCustomShippingZoneFeesZips();
 
         $defaultCurrency = CurrencyQuery::create()->filterByByDefault(1)->findOne();
         $currencies = CurrencyQuery::create()->filterByVisible(1)->filterByByDefault(0)->find()->toArray();
 
         return $this->render('CustomShippingZoneFeesEdit', [
             'shippingZoneId' => $shippingZone->getId(),
-            'edit_language_id' => $langId ? : $defaultLang->getId(),
+            'edit_language_id' => $langId,
             'defaultCurrency' => $defaultCurrency,
             'currencies' => $currencies,
-            "err" => $this->getRequest()->get('err')
+            "err" => $request->get('err')
         ], 200);
     }
 }

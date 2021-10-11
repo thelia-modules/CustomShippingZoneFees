@@ -12,7 +12,7 @@
             <li><a href="{url path='/admin/module/CustomShippingZoneFees'}">{intl l="CustomShippingZoneFees configuration"}</a></li>
             <li>{intl l="Edit custom shipping zone"}</li>
         </ul>
-        {loop name="custom_shipping_zone_fees_loop" type="custom_shipping_zone_fees" locale=$locale id=$shippingZoneId}
+        {loop name="custom_shipping_zone_fees_loop" type="custom_shipping_zone_fees" locale=$locale|default:null id=$shippingZoneId}
         <div class="col-md-12 general-block-decorator">
             {form name="custom_shipping_zone_fees_create_form"}
                 <form action="{url path="/admin/module/CustomShippingZoneFees/update/{$shippingZoneId}"}" method="post">
@@ -41,7 +41,7 @@
                             {form_field field='fee'}
                                 <label for="{$label_attr.for}">{$label}</label>
                                 <div class="input-group">
-                                    <input type="text" name="{$name}" id="{$id}" class="form-control" value="{$FEE}">
+                                    <input type="text" name="{$name}" id="{$label_attr.for}" class="form-control" value="{$FEE}">
                                     <span class="input-group-addon">{$defaultCurrency->getSymbol()}</span>
                                 </div>
                             {/form_field}
@@ -50,7 +50,7 @@
                         {foreach $currencies as $currency}
                         <div class="form-group">
                             <div class="input-group">
-                                <input type="text" class="form-control" value="{$shippingZoneFee * $currency['Rate']}" disabled>
+                                <input type="text" class="form-control" value="{$FEE * $currency['Rate']}" disabled>
                                 <span class="input-group-addon">{$currency['Symbol']}</span>
                             </div>
                         </div>
@@ -98,7 +98,21 @@
 
             {render_form_field field='success_url' value={url path=$smarty.server.REQUEST_URI}}
             {render_form_field field='zip'}
-            {render_form_field field='country' value="64"}
+            {form_field field='country'}
+                <select {form_field_attributes field='country' field_id=64}>
+                    <option value="">-- {intl l="Select Country"} --</option>
+                    {loop type="country" name="country.list" visible="*" order="alpha"}
+                        <option value="{$ID}"
+                                {if $value != ""}
+                                    {if $value == $ID}selected{/if}
+                                {else}
+                                    {if $IS_DEFAULT}selected{/if}
+                                {/if}
+
+                        >{$TITLE}</option>
+                    {/loop}
+                </select>
+            {/form_field}
 
         {/capture}
 

@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: nicolasbarbey
- * Date: 21/08/2020
- * Time: 15:03
- */
 
 namespace CustomShippingZoneFees\Form;
 
@@ -55,8 +49,8 @@ class CustomShippingZoneFeesCreateForm extends BaseForm
             ]);
     }
 
-    public function getName()
+    public static function getName()
     {
-        return 'custom_shipping_zone_create_form';
+        return 'custom_shipping_zone_fees_create_form';
     }
 }

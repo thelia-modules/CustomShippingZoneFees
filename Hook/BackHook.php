@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: nicolasbarbey
- * Date: 21/08/2020
- * Time: 11:15
- */
 
 namespace CustomShippingZoneFees\Hook;
 

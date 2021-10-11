@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: nicolasbarbey
- * Date: 27/08/2020
- * Time: 09:12
- */
 
 namespace CustomShippingZoneFees\Form;
 
@@ -25,7 +19,7 @@ class ShippingZoneEditModuleForm extends BaseForm
         $choices = null;
         /** @var CustomShippingZoneFeesModel $shippingZone */
         foreach ($shippingZones as $shippingZone){
-            $choices[$shippingZone->getId()] = $shippingZone->setLocale($locale)->getName();
+            $choices[$shippingZone->setLocale($locale)->getName()] = $shippingZone->getId();
         }
 
         $this->formBuilder
@@ -43,7 +37,7 @@ class ShippingZoneEditModuleForm extends BaseForm
             ]);
     }
 
-    public function getName()
+    public static function getName()
     {
         return 'shipping_zone_edit_module_form';
     }

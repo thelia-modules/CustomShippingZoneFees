@@ -14,6 +14,7 @@ namespace CustomShippingZoneFees;
 
 use CustomShippingZoneFees\Model\CustomShippingZoneFeesQuery;
 use Propel\Runtime\Connection\ConnectionInterface;
+use Symfony\Component\DependencyInjection\Loader\Configurator\ServicesConfigurator;
 use Symfony\Component\Finder\Finder;
 use Thelia\Install\Database;
 use Thelia\Module\BaseModule;
@@ -29,7 +30,7 @@ class CustomShippingZoneFees extends BaseModule
      *
      * Have fun !
      */
-    public function postActivation(ConnectionInterface $con = null)
+    public function postActivation(ConnectionInterface $con = null): void
     {
         try {
             CustomShippingZoneFeesQuery::create()->findOne();
@@ -39,7 +40,7 @@ class CustomShippingZoneFees extends BaseModule
         }
     }
 
-    public function update($currentVersion, $newVersion, ConnectionInterface $con = null)
+    public function update($currentVersion, $newVersion, ConnectionInterface $con = null): void
     {
         $sqlToExecute = [];
         $finder = new Finder();
@@ -64,5 +65,13 @@ class CustomShippingZoneFees extends BaseModule
         foreach ($sqlToExecute as $version => $sql) {
             $database->insertSql(null, [$sql]);
         }
+    }
+
+    public static function configureServices(ServicesConfigurator $servicesConfigurator): void
+    {
+        $servicesConfigurator->load(self::getModuleCode().'\\', __DIR__)
+            ->exclude([THELIA_MODULE_DIR . ucfirst(self::getModuleCode()). "/I18n/*"])
+            ->autowire(true)
+            ->autoconfigure(true);
     }
 }
