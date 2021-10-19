@@ -26,31 +26,21 @@
         </behavior>
     </table>
     -->
-    <table name="custom_shipping_zone_fees_zip" namespace="CustomShippingZoneFees\Model">
-        <column autoIncrement="true" name="id" primaryKey="true" required="true" type="INTEGER" />
-        <column name="custom_shipping_zone_fees_id" required="true" type="INTEGER" />
-        <column name="country_id" required="true" type="INTEGER" />
-        <column name="zip_code" required="true" type="VARCHAR" />
-
-
-        <foreign-key foreignTable="custom_shipping_zone_fees" name="fk_custom_shipping_zone_fees_id" onDelete="CASCADE" onUpdate="RESTRICT">
-            <reference foreign="id" local="custom_shipping_zone_fees_id" />
-        </foreign-key>
-
-        <foreign-key foreignTable="country" name="fk_country_id" onDelete="RESTRICT" onUpdate="RESTRICT">
-            <reference foreign="id" local="country_id" />
-        </foreign-key>
-    </table>
-
     <table name="custom_shipping_zone_fees" namespace="CustomShippingZoneFees\Model">
         <column autoIncrement="true" name="id" primaryKey="true" required="true" type="INTEGER" />
         <column name="name" required="true" type="VARCHAR" />
         <column name="description" required="true" type="LONGVARCHAR" />
         <column name="fee" required="false" type="FLOAT"/>
+        <column name="country_id" required="true" type="INTEGER" />
+        <column name="zipcodes" required="false" type="LONGVARCHAR" />
         <behavior name="timestampable" />
         <behavior name="i18n">
             <parameter name="i18n_columns" value="name, description" />
         </behavior>
+
+        <foreign-key foreignTable="country" name="fk_custom_shipping_zone_country_id" onDelete="RESTRICT" onUpdate="RESTRICT">
+            <reference foreign="id" local="country_id" />
+        </foreign-key>
     </table>
 
     <table name="custom_shipping_zone_fees_modules" namespace="CustomShippingZoneFees\Model">

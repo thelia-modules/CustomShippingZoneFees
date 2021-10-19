@@ -10,7 +10,6 @@
 
     <forms>
         <form name="custom_shipping_zone_fees_create_form" class="CustomShippingZoneFees\Form\CustomShippingZoneFeesCreateForm" />
-        <form name="zip_code_create_form" class="CustomShippingZoneFees\Form\ZipCodeCreateForm" />
         <form name="shipping_zone_edit_module_form" class="CustomShippingZoneFees\Form\ShippingZoneEditModuleForm" />
     </forms>
 

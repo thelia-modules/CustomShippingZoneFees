@@ -51,6 +51,24 @@
         {render_form_field field='description'}
 
         <div class="form-group">
+        {form_field field='country'}
+            <label for="{$label_attr.for}">{$label}</label>
+            <select {form_field_attributes field='country' field_id=64}>
+                <option value="">-- {intl l="Select Country"} --</option>
+                {loop type="country" name="country.list" visible="*" order="alpha"}
+                    <option value="{$ID}"
+                            {if $value != ""}
+                                {if $COUNTRY_ID == $ID}selected{/if}
+                            {else}
+                                {if $IS_DEFAULT}selected{/if}
+                            {/if}
+                    >{$TITLE}</option>
+                {/loop}
+            </select>
+        {/form_field}
+        </div>
+
+        <div class="form-group">
             {form_field field='fee'}
                 <label for="{$label_attr.for}">{$label}</label>
                 <div class="input-group">
@@ -59,6 +77,8 @@
                 </div>
             {/form_field}
         </div>
+
+        {render_form_field field='zipcodes'}
 
     {/capture}
 

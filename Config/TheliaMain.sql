@@ -4,33 +4,6 @@
 SET FOREIGN_KEY_CHECKS = 0;
 
 -- ---------------------------------------------------------------------
--- custom_shipping_zone_fees_zip
--- ---------------------------------------------------------------------
-
-DROP TABLE IF EXISTS `custom_shipping_zone_fees_zip`;
-
-CREATE TABLE `custom_shipping_zone_fees_zip`
-(
-    `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `custom_shipping_zone_fees_id` INTEGER NOT NULL,
-    `country_id` INTEGER NOT NULL,
-    `zip_code` VARCHAR(255) NOT NULL,
-    PRIMARY KEY (`id`),
-    INDEX `FI_custom_shipping_zone_fees_id` (`custom_shipping_zone_fees_id`),
-    INDEX `FI_country_id` (`country_id`),
-    CONSTRAINT `fk_custom_shipping_zone_fees_id`
-        FOREIGN KEY (`custom_shipping_zone_fees_id`)
-        REFERENCES `custom_shipping_zone_fees` (`id`)
-        ON UPDATE RESTRICT
-        ON DELETE CASCADE,
-    CONSTRAINT `fk_country_id`
-        FOREIGN KEY (`country_id`)
-        REFERENCES `country` (`id`)
-        ON UPDATE RESTRICT
-        ON DELETE RESTRICT
-) ENGINE=InnoDB;
-
--- ---------------------------------------------------------------------
 -- custom_shipping_zone_fees
 -- ---------------------------------------------------------------------
 
@@ -40,9 +13,17 @@ CREATE TABLE `custom_shipping_zone_fees`
 (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `fee` FLOAT,
+    `country_id` INTEGER NOT NULL,
+    `zipcodes` TEXT,
     `created_at` DATETIME,
     `updated_at` DATETIME,
-    PRIMARY KEY (`id`)
+    PRIMARY KEY (`id`),
+    INDEX `fi_custom_shipping_zone_country_id` (`country_id`),
+    CONSTRAINT `fk_custom_shipping_zone_country_id`
+        FOREIGN KEY (`country_id`)
+        REFERENCES `country` (`id`)
+        ON UPDATE RESTRICT
+        ON DELETE RESTRICT
 ) ENGINE=InnoDB;
 
 -- ---------------------------------------------------------------------
@@ -57,8 +38,8 @@ CREATE TABLE `custom_shipping_zone_fees_modules`
     `custom_shipping_zone_fees_id` INTEGER NOT NULL,
     `module_id` INTEGER NOT NULL,
     PRIMARY KEY (`id`),
-    INDEX `FI_custom_shipping_zone_fees_module_id` (`module_id`),
-    INDEX `FI_module_custom_shipping_zone_fees_id` (`custom_shipping_zone_fees_id`),
+    INDEX `fi_custom_shipping_zone_fees_module_id` (`module_id`),
+    INDEX `fi_module_custom_shipping_zone_fees_id` (`custom_shipping_zone_fees_id`),
     CONSTRAINT `fk_custom_shipping_zone_fees_module_id`
         FOREIGN KEY (`module_id`)
         REFERENCES `module` (`id`)
@@ -84,7 +65,7 @@ CREATE TABLE `custom_shipping_zone_fees_i18n`
     `name` VARCHAR(255) NOT NULL,
     `description` TEXT NOT NULL,
     PRIMARY KEY (`id`,`locale`),
-    CONSTRAINT `custom_shipping_zone_fees_i18n_FK_1`
+    CONSTRAINT `custom_shipping_zone_fees_i18n_fk_ae6813`
         FOREIGN KEY (`id`)
         REFERENCES `custom_shipping_zone_fees` (`id`)
         ON DELETE CASCADE

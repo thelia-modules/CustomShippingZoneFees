@@ -21,14 +21,6 @@
         <default key="_controller">CustomShippingZoneFees\Controller\CustomShippingZoneFeesController::renderShippingZonePageAction</default>
     </route>
 
-    <route id="custom.shipping.zone.fees.zip.create" path="/admin/module/CustomShippingZoneFees/zip/create/{id}">
-        <default key="_controller">CustomShippingZoneFees\Controller\CustomShippingZoneFeesController::createZipShippingZoneAction</default>
-    </route>
-
-    <route id="custom.shipping.zone.fees.zip.delete" path="/admin/module/CustomShippingZoneFees/zip/delete/{zipId}">
-        <default key="_controller">CustomShippingZoneFees\Controller\CustomShippingZoneFeesController::deleteZipShippingZoneAction</default>
-    </route>
-
     <route id="custom.shipping.zone.fees.module.update" path="/admin/module/CustomShippingZoneFees/updateModule/{moduleId}">
         <default key="_controller">CustomShippingZoneFees\Controller\DeliveryModuleController::updateDeliveryModuleShippingZoneAction</default>
     </route>
@@ -36,7 +28,5 @@
     <route id="custom.shipping.zone.fees.module.remove" path="/admin/module/CustomShippingZoneFees/remove/{id}">
         <default key="_controller">CustomShippingZoneFees\Controller\DeliveryModuleController::removeDeliveryModuleShippingZoneAction</default>
     </route>
-
-
 
 </routes>

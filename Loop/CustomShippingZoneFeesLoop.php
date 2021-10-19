@@ -72,7 +72,9 @@ class CustomShippingZoneFeesLoop extends BaseLoop implements PropelSearchLoopInt
                 ->set("FEE", $shippingZone->getFee())
                 ->set("NAME", $shippingZone->setLocale($locale)->getName())
                 ->set("DESCRIPTION", $shippingZone->setLocale($locale)->getDescription())
-                ->set("ZIP_CODES", $shippingZone->getCustomShippingZoneFeesZips())
+                ->set("COUNTRY_ID", $shippingZone->getCountryId())
+                ->set("COUNTRY_NAME", $shippingZone->getCountry()->setLocale($locale)->getTitle())
+                ->set("ZIP_CODES", $shippingZone->getZipcodes())
             ;
             $loopResult->addRow($loopResultRow);
         }
