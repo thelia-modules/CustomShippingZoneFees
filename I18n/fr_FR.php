@@ -6,5 +6,5 @@ return array(
     'Description' => 'Description',
     'Fee' => 'Frais',
     'Shipping zone name' => 'Nom de la zone de livraison',
-    'Zip code' => 'Code Postal',
+    'Zip codes separated by a comma' => 'Codes postaux séparés par une virgule',
 );

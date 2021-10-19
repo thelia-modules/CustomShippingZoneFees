@@ -33,7 +33,10 @@ class CustomShippingZoneFeesController extends BaseAdminController
                     ->setFee($form->get('fee')->getData())
                     ->setLocale($lang->getLocale())
                     ->setName($form->get('name')->getData())
-                    ->setDescription($form->get('description')->getData());
+                    ->setDescription($form->get('description')->getData())
+                    ->setCountryId($form->get('country')->getData())
+                    ->setZipcodes($form->get('zipcodes')->getData())
+                ;
             }
             $shippingZone->save();
 
@@ -79,53 +82,14 @@ class CustomShippingZoneFeesController extends BaseAdminController
                 ->setLocale($lang->getLocale())
                 ->setName($form->get('name')->getData())
                 ->setDescription($form->get('description')->getData())
+                ->setCountryId($form->get('country')->getData())
+                ->setZipcodes($form->get('zipcodes')->getData())
                 ->save();
 
             return $this->generateRedirect(URL::getInstance()->absoluteUrl("/admin/module/CustomShippingZoneFees/edit/$id", [
                 "edit_language_id" => $lang->getId()
             ]));
         }catch (\Exception $exception){
-            return $this->generateRedirect(URL::getInstance()->absoluteUrl("/admin/module/CustomShippingZoneFees/edit/$id", [
-                "err" => $exception->getMessage(),
-                "edit_language_id" => $lang->getId()
-            ]));
-        }
-    }
-
-    public function createZipShippingZoneAction(Request $request)
-    {
-        $lang = $request->getSession()->get("thelia.admin.edition.lang");
-        $id = $request->get("id");
-        $zipCodeForm = $this->createForm(ZipCodeCreateForm::getName());
-        try{
-            $shippingZone = CustomShippingZoneFeesQuery::create()->findOneById($id);
-            $form = $this->validateForm($zipCodeForm);
-            $zip = (new CustomShippingZoneFeesZip())
-                ->setZipCode($form->get("zip")->getData())
-                ->setCountryId($form->get("country")->getData());
-            $shippingZone->addCustomShippingZoneFeesZip($zip)->save();
-            return $this->generateRedirect(URL::getInstance()->absoluteUrl("/admin/module/CustomShippingZoneFees/edit/$id",[
-                "edit_language_id" => $lang->getId()
-            ]));
-        }catch (\Exception $exception){
-            return $this->generateRedirect(URL::getInstance()->absoluteUrl("/admin/module/CustomShippingZoneFees/edit/$id", [
-                "err" => $exception->getMessage(),
-                "edit_language_id" => $lang->getId()
-            ]));
-        }
-    }
-
-    public function deleteZipShippingZoneAction(Request $request)
-    {
-        $lang = $request->getSession()->get("thelia.admin.edition.lang");
-        $zip = CustomShippingZoneFeesZipQuery::create()->findOneById($request->get("zipId"));
-        $id = $zip->getCustomShippingZoneFeesId();
-        try{
-            $zip->delete();
-            return $this->generateRedirect(URL::getInstance()->absoluteUrl("/admin/module/CustomShippingZoneFees/edit/$id",[
-                "edit_language_id" => $lang->getId()
-            ]));
-        }catch (\Exception $exception) {
             return $this->generateRedirect(URL::getInstance()->absoluteUrl("/admin/module/CustomShippingZoneFees/edit/$id", [
                 "err" => $exception->getMessage(),
                 "edit_language_id" => $lang->getId()

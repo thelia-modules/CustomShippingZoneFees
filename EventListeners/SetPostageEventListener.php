@@ -50,11 +50,14 @@ class SetPostageEventListener implements EventSubscriberInterface
 
         /** @var CustomShippingZoneFeesModules $zoneModule */
         foreach ($shippingZoneModule as $zoneModule){
-            $zipCodes = $zoneModule->getCustomShippingZoneFees()->getCustomShippingZoneFeesZips();
+            $zipCodes = explode(',', str_replace(' ', '', $zoneModule->getCustomShippingZoneFees()->getZipcodes()));
 
             foreach ($zipCodes as $zipCode){
-                if ($zipCode->getZipCode() === $address->getZipcode() && $zipCode->getCountryId() === $address->getCountryId()){
-                    $postage = $event->getPostage();
+                if (
+                    $zipCode === $address->getZipcode() &&
+                    $zoneModule->getCustomShippingZoneFees()->getCountryId() === $address->getCountryId() &&
+                    null !== $postage = $event->getPostage()
+                ){
                     $postage->setAmount($postage->getAmount() + ($zoneModule->getCustomShippingZoneFees()->getFee() * $rate));
                     break;
                 }
@@ -80,10 +83,10 @@ class SetPostageEventListener implements EventSubscriberInterface
 
         /** @var CustomShippingZoneFeesModules $zoneModule */
         foreach ($shippingZoneModule as $zoneModule){
-            $zipCodes = $zoneModule->getCustomShippingZoneFees()->getCustomShippingZoneFeesZips();
+            $zipCodes = explode(',', str_replace(' ', '', $zoneModule->getCustomShippingZoneFees()->getZipcodes()));
 
             foreach ($zipCodes as $zipCode){
-                if ($zipCode->getZipCode() === $address->getZipcode() && $zipCode->getCountryId() === $address->getCountryId()){
+                if ($zipCode === $address->getZipcode() && $zoneModule->getCustomShippingZoneFees()->getCountryId() === $address->getCountryId()){
                     /** @var DeliveryModuleOption $deliveryModuleOption */
                     foreach ($event->getDeliveryModuleOptions() as $deliveryModuleOption){
                         $deliveryModuleOption->setPostage($deliveryModuleOption->getPostage() > 0 ? $deliveryModuleOption->getPostage() + ($zoneModule->getCustomShippingZoneFees()->getFee() * $rate) : 0);
@@ -100,8 +103,8 @@ class SetPostageEventListener implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return array(
-            TheliaEvents::MODULE_DELIVERY_GET_POSTAGE =>['setModuleDeliveryPostage', 127],
-            OpenApiEvents::MODULE_DELIVERY_GET_OPTIONS =>['setModuleDeliveryPostageOpenApi', 100]
+            TheliaEvents::MODULE_DELIVERY_GET_POSTAGE => ['setModuleDeliveryPostage', 127],
+            OpenApiEvents::MODULE_DELIVERY_GET_OPTIONS => ['setModuleDeliveryPostageOpenApi', 100]
         );
     }
 
