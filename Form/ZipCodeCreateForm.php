@@ -27,7 +27,7 @@ class ZipCodeCreateForm extends BaseForm
         /** @var Country $country */
         foreach ($countries as $country){
             $choice += [
-                 $country->getId() => $country->setLocale('en_US')->getTitle()
+                $country->setLocale('en_US')->getTitle() => $country->getId()
             ];
         }
 
@@ -57,7 +57,7 @@ class ZipCodeCreateForm extends BaseForm
             ]);
     }
 
-    public function getName()
+    public static function getName()
     {
         return "zip_code_create_form";
     }

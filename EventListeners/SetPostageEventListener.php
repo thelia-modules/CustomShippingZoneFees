@@ -9,21 +9,28 @@
 namespace CustomShippingZoneFees\EventListeners;
 
 
-use CustomShippingZoneFees\Model\Base\CustomShippingZoneFeesModules;
+use CustomShippingZoneFees\Model\CustomShippingZoneFeesModules;
 use CustomShippingZoneFees\Model\CustomShippingZoneFeesModulesQuery;
+use CustomShippingZoneFees\Model\CustomShippingZoneExcludedZipQuery;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Thelia\Core\Event\Delivery\DeliveryPostageEvent;
 use Thelia\Core\Event\TheliaEvents;
-use Thelia\Core\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
+use OpenApi\Events\DeliveryModuleOptionEvent;
+use OpenApi\Events\ModelExtendDataEvent;
+use OpenApi\Events\OpenApiEvents;
+use OpenApi\Model\Api\DeliveryModule;
+use OpenApi\Model\Api\Cart;
+use OpenApi\OpenApi;
 
 
 class SetPostageEventListener implements EventSubscriberInterface
 {
     protected $request;
 
-    public function __construct(Request $request)
+    public function __construct(RequestStack $requestStack)
     {
-        $this->request = $request;
+        $this->request = $requestStack;
     }
 
     public function getRequest()
@@ -61,16 +68,31 @@ class SetPostageEventListener implements EventSubscriberInterface
                 }
             }
         }
-
         return $event;
+    }
+
+    public function modifyModuleDeliveryOptions(DeliveryModuleOptionEvent $event)
+    {
+        $address = $event->getAddress();
+        $options = $event->getDeliveryModuleOptions();
+
+        $zipCodesExcluded = CustomShippingZoneExcludedZipQuery::create()->filterByCountryId($address->getCountryId())->find()->getData();
+        foreach ($zipCodesExcluded as $zipCodeExcluded){
+            if (strpos($address->getZipcode(), $zipCodeExcluded->getZipCode()) === 0) {
+                foreach ($options as $option) {
+                    $option->setValid(false);
+                }
+            }
+        }
     }
 
 
     public static function getSubscribedEvents()
     {
-        return array(
-            TheliaEvents::MODULE_DELIVERY_GET_POSTAGE => array('setModuleDeliveryPostage')
-        );
+        return [
+            TheliaEvents::MODULE_DELIVERY_GET_POSTAGE => ['setModuleDeliveryPostage', 10],
+            OpenApiEvents::MODULE_DELIVERY_GET_OPTIONS => ['modifyModuleDeliveryOptions', 20],
+        ];
     }
 
 }

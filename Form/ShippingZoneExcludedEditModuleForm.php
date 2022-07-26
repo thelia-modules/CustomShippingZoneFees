@@ -16,14 +16,14 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Thelia\Core\Translation\Translator;
 use Thelia\Form\BaseForm;
 
-class ShippingZoneEditModuleForm extends BaseForm
+class ShippingZoneExcludedEditModuleForm extends BaseForm
 {
     protected function buildForm()
     {
         $locale = $this->getRequest()->getSession()->getLang()->getLocale();
-        $shippingZones = CustomShippingZoneFeesQuery::create()->find();
+        $shippingZones = CustomShippingZoneExcludedQuery::create()->find();
         $choices = null;
-        /** @var CustomShippingZoneFeesModel $shippingZone */
+        /** @var CustomShippingZoneExcludedModel $shippingZone */
         foreach ($shippingZones as $shippingZone){
             $choices[$shippingZone->setLocale($locale)->getName()] = $shippingZone->getId();
         }
@@ -45,6 +45,6 @@ class ShippingZoneEditModuleForm extends BaseForm
 
     public static function getName()
     {
-        return 'shipping_zone_edit_module_form';
+        return 'shipping_zone_excluded_edit_module_form';
     }
 }

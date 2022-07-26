@@ -13,9 +13,9 @@
                         <div class="form-group">
                             <label for="{$label_attr.for}" class="control-label">{$label}</label>
                             <div class="input-group">
-                                <select name="{$name}" id="{$id}" class="form-control">
+                                <select name="{$name}" id="{$id|default:null}" class="form-control">
                                     {loop name="select_custom_shipping_zone_fees_loop" type="custom_shipping_zone_fees" without_zone="{$delivery_module_id}" locale=$locale}
-                                        <option value={$ID}>{$NAME}</option>
+                                        <option value={$ID|default:null}>{$NAME}</option>
                                     {/loop}
                                 </select>
                                 <span class="input-group-btn">
@@ -41,7 +41,7 @@
                     {foreach $shipping_zones as $shipping_zone}
                         <tr>
                             <td>
-                                <a href="{url path="admin/module/CustomShippingZoneFees/edit/%id" id=$shipping_zone['id']}">
+                                <a href="{url path="admin/module/CustomShippingZoneFees/edit/%id" id=$shipping_zone['id']|default:null}">
                                     {$shipping_zone['name']}
                                 </a>
                             </td>

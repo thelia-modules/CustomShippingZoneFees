@@ -13,14 +13,22 @@ use CustomShippingZoneFees\Model\CustomShippingZoneFeesModules;
 use CustomShippingZoneFees\Model\CustomShippingZoneFeesModulesQuery;
 use Thelia\Controller\Admin\BaseAdminController;
 use Thelia\Tools\URL;
+use Symfony\Component\Routing\Annotation\Route;
 
+/**
+ * Class DeliveryModuleController
+ * @Route("/admin/module/CustomShippingZoneFees", name="module_delivery") 
+ */
 class DeliveryModuleController extends BaseAdminController
 {
-    public function updateDeliveryModuleShippingZoneAction()
+    
+    /**
+     * @Route("/updateModule/{moduleId}", name="update_module_delivery") 
+     */
+    public function updateDeliveryModuleShippingZoneAction($moduleId)
     {
-        $moduleId = $this->getRequest()->get('moduleId');
         try{
-            $form = $this->validateForm(new ShippingZoneEditModuleForm($this->getRequest()));
+            $form = $this->validateForm($this->createForm(ShippingZoneEditModuleForm::getName()));
 
             (new CustomShippingZoneFeesModules())
                 ->setCustomShippingZoneFeesId($form->get('select_zone')->getData())
@@ -35,10 +43,11 @@ class DeliveryModuleController extends BaseAdminController
     /**
      * @return \Symfony\Component\HttpFoundation\Response
      * @throws \Propel\Runtime\Exception\PropelException
+     * @Route("/remove/{id}", name="remove_module_delivery")
      */
-    public function removeDeliveryModuleShippingZoneAction()
+    public function removeDeliveryModuleShippingZoneAction($id)
     {
-        $CustomShippingZoneFeesModules = CustomShippingZoneFeesModulesQuery::create()->findOneById($this->getRequest()->get('id'));
+        $CustomShippingZoneFeesModules = CustomShippingZoneFeesModulesQuery::create()->findOneById($id);
 
         $moduleId = $CustomShippingZoneFeesModules->getModuleId();
 

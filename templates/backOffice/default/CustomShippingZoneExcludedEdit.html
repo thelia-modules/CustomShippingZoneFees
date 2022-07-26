@@ -1,7 +1,7 @@
 {default_translation_domain domain='customshippingzonefees.bo.default'}
 {extends file="admin-layout.tpl"}
 
-{block name="page-title"}{intl l='Edit Custom Shipping Zone'}{/block}
+{block name="page-title"}{intl l='Edit Custom Shipping Zone to Exclude'}{/block}
 
 {block name="main-content"}
 
@@ -9,13 +9,13 @@
         <ul class="breadcrumb">
             <li><a href="{url path='/admin'}">{intl l="Home" d="hooknavigation.bo.default"}</a></li>
             <li><a href="{url path='/admin/modules'}">{intl l="Modules" d="hooknavigation.bo.default"}</a></li>
-            <li><a href="{url path='/admin/module/CustomShippingZoneFees'}">{intl l="CustomShippingZoneFees configuration"}</a></li>
-            <li>{intl l="Edit custom shipping zone"}</li>
+            <li><a href="{url path='/admin/module/CustomShippingZoneFees'}">{intl l="CustomShippingZoneExcluded configuration"}</a></li>
+            <li>{intl l="Edit custom shipping zone excluded"}</li>
         </ul>
-        {loop name="custom_shipping_zone_fees_loop" type="custom_shipping_zone_fees" locale=$locale id=$shippingZoneId}
+        {loop name="custom_shipping_zone_excluded_loop" type="custom_shipping_zone_excluded" locale=$locale id=$shippingZoneId}
         <div class="col-md-12 general-block-decorator">
-            {form name="custom_shipping_zone_fees_create_form"}
-                <form action="{url path="/admin/module/CustomShippingZoneFees/update/{$shippingZoneId}"}" method="post">
+            {form name="custom_shipping_zone_excluded_create_form"}
+                <form action="{url path="/admin/module/CustomShippingZoneFees/update-excluded/{$shippingZoneId}"}" method="post">
                     <div class="tab-pane">
                         <div class="form-container">
                             {include
@@ -37,29 +37,10 @@
 
                         {render_form_field field='description' value={$DESCRIPTION}}
 
-                        <div class="form-group">
-                            {form_field field='fee'}
-                                <label for="{$label_attr.for}">{$label}</label>
-                                <div class="input-group">
-                                    <input type="text" name="{$name}" class="form-control" value="{$FEE}">
-                                    <span class="input-group-addon">{$defaultCurrency->getSymbol()}</span>
-                                </div>
-                            {/form_field}
-                        </div>
-
-                        {foreach $currencies as $currency}
-                        <div class="form-group">
-                            <div class="input-group">
-                                <input type="text" class="form-control" value="{$FEE|default:0 * $currency['Rate']}" disabled>
-                                <span class="input-group-addon">{$currency['Symbol']}</span>
-                            </div>
-                        </div>
-                        {/foreach}
-
                     </div>
                 </form>
                 <div class="col-md-7">
-                    <a class="btn btn-primary pull-right" title="{intl l="Add a new zip code"}" href="#add_zip_code_dialog" data-toggle="modal">
+                    <a class="btn btn-primary pull-right" title="{intl l="Add a new zip code"}" href="#add_zip_code_excluded_dialog" data-toggle="modal">
                         <span class="glyphicon glyphicon-plus-sign"></span>
                     </a>
                     <table class="table table-striped table-condensed">
@@ -76,7 +57,7 @@
                                 <td>{$zipCode->getZipCode()}</td>
                                 <td>{$zipCode->getCountry()->setLocale($locale)->getTitle()}</td>
                                 <td nowrap class="actions">
-                                    <a href="{url path="/admin/module/CustomShippingZoneFees/zip/delete/%zipId" zipId=$zipCode->getId()}" class="btn btn-danger">
+                                    <a href="{url path="/admin/module/CustomShippingZoneFees/zip/delete-excluded/%zipId" zipId=$zipCode->getId()}" class="btn btn-danger">
                                         <span class="glyphicon glyphicon-trash"></span>
                                     </a>
                                 </td>
@@ -93,7 +74,7 @@
 
     {form name="zip_code_create_form"}
 
-        {capture "zip_code_creation_dialog"}
+        {capture "zip_code_excluded_creation_dialog"}
             {form_hidden_fields}
 
             {render_form_field field='success_url' value={url path=$smarty.server.REQUEST_URI}}
@@ -106,14 +87,14 @@
         {include
         file = "includes/generic-create-dialog.html"
 
-        dialog_id    = "add_zip_code_dialog"
+        dialog_id    = "add_zip_code_excluded_dialog"
         dialog_title = {intl l="Add a new zip code"}
-        dialog_body  = {$smarty.capture.zip_code_creation_dialog nofilter}
+        dialog_body  = {$smarty.capture.zip_code_excluded_creation_dialog nofilter}
 
         dialog_ok_label     = {intl l="Create"}
         dialog_cancel_label = {intl l="Cancel"}
 
-        form_action        = {url path="/admin/module/CustomShippingZoneFees/zip/create/$shippingZoneId"}
+        form_action        = {url path="/admin/module/CustomShippingZoneFees/zip/create-excluded/$shippingZoneId"}
         form_enctype       = {form_enctype}
         form_error_message = $form_error_message
         }
