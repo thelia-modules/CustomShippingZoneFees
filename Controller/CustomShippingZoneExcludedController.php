@@ -9,12 +9,12 @@
 namespace CustomShippingZoneFees\Controller;
 
 
-use CustomShippingZoneFees\Form\CustomShippingZoneFeesCreateForm;
+use CustomShippingZoneFees\Form\CustomShippingZoneExcludedCreateForm;
 use CustomShippingZoneFees\Form\ZipCodeCreateForm;
-use CustomShippingZoneFees\Model\CustomShippingZoneFees;
-use CustomShippingZoneFees\Model\CustomShippingZoneFeesQuery;
-use CustomShippingZoneFees\Model\CustomShippingZoneFeesZip;
-use CustomShippingZoneFees\Model\CustomShippingZoneFeesZipQuery;
+use CustomShippingZoneFees\Model\CustomShippingZoneExcluded;
+use CustomShippingZoneFees\Model\CustomShippingZoneExcludedQuery;
+use CustomShippingZoneFees\Model\CustomShippingZoneExcludedZip;
+use CustomShippingZoneFees\Model\CustomShippingZoneExcludedZipQuery;
 use Symfony\Component\HttpFoundation\Request;
 use Thelia\Controller\Admin\BaseAdminController;
 use Thelia\Model\Base\CurrencyQuery;
@@ -24,27 +24,26 @@ use Thelia\Tools\URL;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * Class CustomShippingZoneFeesController
- * @Route("/admin/module/CustomShippingZoneFees", name="custom_shipping_zone") 
+ * Class CustomShippingZoneExcludedController
+ * @Route("/admin/module/CustomShippingZoneFees", name="custom_shipping_zone_excluded") 
  */
-class CustomShippingZoneFeesController extends BaseAdminController
+class CustomShippingZoneExcludedController extends BaseAdminController
 {
     /**
-     * @Route("/create", name="create") 
+     * @Route("/create-excluded", name="create_excluded") 
      */
     public function createShippingZoneAction()
     {
         $langs = LangQuery::create()->filterByActive(1)->find();
 
-        $createForm = $this->createForm(CustomShippingZoneFeesCreateForm::getName());
+        $createForm = $this->createForm(CustomShippingZoneExcludedCreateForm::getName());
         try{
             $form = $this->validateForm($createForm);
 
-            $shippingZone = new CustomShippingZoneFees();
+            $shippingZone = new CustomShippingZoneExcluded();
 
             foreach ($langs as $lang){
                 $shippingZone
-                    ->setFee($form->get('fee')->getData())
                     ->setLocale($lang->getLocale())
                     ->setName($form->get('name')->getData())
                     ->setDescription($form->get('description')->getData());
@@ -60,13 +59,13 @@ class CustomShippingZoneFeesController extends BaseAdminController
         }
     }
     /**
-     * @Route("/delete/{id}", name="delete") 
+     * @Route("/delete-excluded/{id}", name="delete_excluded") 
      */
-    public function deleteShippingZoneAction($id)
+    public function deleteShippingZoneExcludedAction($id)
     {
         try{
-            $shippingZone = CustomShippingZoneFeesQuery::create()->findOneById($id);
-            foreach ($shippingZone->getCustomShippingZoneFeesZips() as $zip){
+            $shippingZone = CustomShippingZoneExcludedQuery::create()->findOneById($id);
+            foreach ($shippingZone->getCustomShippingZoneExcludedZips() as $zip){
                 $zip->delete();
             }
             $shippingZone->delete();
@@ -79,14 +78,14 @@ class CustomShippingZoneFeesController extends BaseAdminController
     }
 
     /**
-     * @Route("/update/{id}", name="update") 
+     * @Route("/update-excluded/{id}", name="update_excluded") 
      */
     public function updateShippingZoneAction($id, Request $request)
     {
-        $shippingZone = CustomShippingZoneFeesQuery::create()->findOneById($id);
+        $shippingZone = CustomShippingZoneExcludedQuery::create()->findOneById($id);
         /** @var Lang $lang */
         $lang = $request->getSession()->get("thelia.admin.edition.lang");
-        $createForm = $this->createForm(CustomShippingZoneFeesCreateForm::getName());
+        $createForm = $this->createForm(CustomShippingZoneExcludedCreateForm::getName());
         try{
             $form = $this->validateForm($createForm);
 
@@ -97,11 +96,11 @@ class CustomShippingZoneFeesController extends BaseAdminController
                 ->setDescription($form->get('description')->getData())
                 ->save();
 
-            return $this->generateRedirect(URL::getInstance()->absoluteUrl("/admin/module/CustomShippingZoneFees/edit/$id", [
+            return $this->generateRedirect(URL::getInstance()->absoluteUrl("/admin/module/CustomShippingZoneFees/edit-excluded/$id", [
                 "edit_language_id" => $lang->getId()
             ]));
         }catch (\Exception $exception){
-            return $this->generateRedirect(URL::getInstance()->absoluteUrl("/admin/module/CustomShippingZoneFees/edit/$id", [
+            return $this->generateRedirect(URL::getInstance()->absoluteUrl("/admin/module/CustomShippingZoneFees/edit-excluded/$id", [
                 "err" => $exception->getMessage(),
                 "edit_language_id" => $lang->getId()
             ]));
@@ -109,24 +108,24 @@ class CustomShippingZoneFeesController extends BaseAdminController
     }
 
     /**
-     * @Route("/zip/create/{id}", name="zip_create") 
+     * @Route("/zip/create-excluded/{id}", name="zip_create_excluded") 
      */
     public function createZipShippingZoneAction($id, Request $request)
     {
         $lang = $request->getSession()->get("thelia.admin.edition.lang");
         $createForm = $this->createForm(ZipCodeCreateForm::getName());
         try{
-            $shippingZone = CustomShippingZoneFeesQuery::create()->findOneById($id);
+            $shippingZone = CustomShippingZoneExcludedQuery::create()->findOneById($id);
             $form = $this->validateForm($createForm);
-            $zip = (new CustomShippingZoneFeesZip())
+            $zip = (new CustomShippingZoneExcludedZip())
                 ->setZipCode($form->get("zip")->getData())
                 ->setCountryId($form->get("country")->getData());
-            $shippingZone->addCustomShippingZoneFeesZip($zip)->save();
-            return $this->generateRedirect(URL::getInstance()->absoluteUrl("/admin/module/CustomShippingZoneFees/edit/$id",[
+            $shippingZone->addCustomShippingZoneExcludedZip($zip)->save();
+            return $this->generateRedirect(URL::getInstance()->absoluteUrl("/admin/module/CustomShippingZoneFees/edit-excluded/$id",[
                 "edit_language_id" => $lang->getId()
             ]));
         }catch (\Exception $exception){
-            return $this->generateRedirect(URL::getInstance()->absoluteUrl("/admin/module/CustomShippingZoneFees/edit/$id", [
+            return $this->generateRedirect(URL::getInstance()->absoluteUrl("/admin/module/CustomShippingZoneFees/edit-excluded/$id", [
                 "err" => $exception->getMessage(),
                 "edit_language_id" => $lang->getId()
             ]));
@@ -134,20 +133,20 @@ class CustomShippingZoneFeesController extends BaseAdminController
     }
 
     /**
-     * @Route("/zip/delete/{id}", name="zip_delete") 
+     * @Route("/zip/delete-excluded/{id}", name="zip_delete_excluded") 
      */
     public function deleteZipShippingZoneAction($id, Request $request)
     {
         $lang = $request->getSession()->get("thelia.admin.edition.lang");
-        $zip = CustomShippingZoneFeesZipQuery::create()->findOneById($id);
-        $customShippingZoneFeesId = $zip->getCustomShippingZoneFeesId();
+        $zip = CustomShippingZoneExcludedZipQuery::create()->findOneById($id);
+        $customShippingZoneFeesId = $zip->getCustomShippingZoneExcludedId();
         try{
             $zip->delete();
-            return $this->generateRedirect(URL::getInstance()->absoluteUrl("/admin/module/CustomShippingZoneFees/edit/$customShippingZoneFeesId",[
+            return $this->generateRedirect(URL::getInstance()->absoluteUrl("/admin/module/CustomShippingZoneFees/edit-excluded/$customShippingZoneFeesId",[
                 "edit_language_id" => $lang->getId()
             ]));
         }catch (\Exception $exception) {
-            return $this->generateRedirect(URL::getInstance()->absoluteUrl("/admin/module/CustomShippingZoneFees/edit/$customShippingZoneFeesId", [
+            return $this->generateRedirect(URL::getInstance()->absoluteUrl("/admin/module/CustomShippingZoneFees/edit-excluded/$customShippingZoneFeesId", [
                 "err" => $exception->getMessage(),
                 "edit_language_id" => $lang->getId()
             ]));
@@ -157,7 +156,7 @@ class CustomShippingZoneFeesController extends BaseAdminController
     /**
      * @return \Thelia\Core\HttpFoundation\Response
      * @throws \Propel\Runtime\Exception\PropelException
-     * @Route("/edit/{id}", name="edit") 
+     * @Route("/edit-excluded/{id}", name="edit_excluded") 
      */
     public function renderShippingZonePageAction($id, Request $request)
     {
@@ -166,14 +165,14 @@ class CustomShippingZoneFeesController extends BaseAdminController
         if ($langId = $request->get('edit_language_id')){
             $locale = LangQuery::create()->findOneById($langId)->getLocale();
         }
-        $shippingZone = CustomShippingZoneFeesQuery::create()->findOneById($id);
+        $shippingZone = CustomShippingZoneExcludedQuery::create()->findOneById($id);
 
-        $zipCodes = $shippingZone->getCustomShippingZoneFeesZips();
+        $zipCodes = $shippingZone->getCustomShippingZoneExcludedZips();
 
         $defaultCurrency = CurrencyQuery::create()->filterByByDefault(1)->findOne();
         $currencies = CurrencyQuery::create()->filterByVisible(1)->filterByByDefault(0)->find()->toArray();
 
-        return $this->render('CustomShippingZoneFeesEdit', [
+        return $this->render('CustomShippingZoneExcludedEdit', [
             'shippingZoneId' => $shippingZone->getId(),
             'edit_language_id' => $langId ? : $defaultLang->getId(),
             'defaultCurrency' => $defaultCurrency,
